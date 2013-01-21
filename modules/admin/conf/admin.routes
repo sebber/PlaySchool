@@ -1,0 +1,14 @@
+GET   /                      controllers.admin.Application.index()
+GET   /help                  controllers.admin.Application.help()
+
+GET   /login                 controllers.admin.Auth.login()
+POST  /login                 controllers.admin.Auth.authenticate()
+GET   /logout                 controllers.admin.Auth.logout()
+
+
+GET   /users                  controllers.admin.Users.index()
+GET   /user/:id               controllers.admin.Users.show(id: Long)
+
+
+
+GET   /assets/*file          controllers.admin.Assets.at(path="/public", file)
