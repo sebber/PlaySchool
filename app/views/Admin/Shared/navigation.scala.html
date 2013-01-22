@@ -1,4 +1,4 @@
-@()(implicit context: ContextedRequest)
+@()(implicit ctx: Context)
 <div class="navbar navbar-inverse navbar-fixed-top">
   <div class="navbar-inner">
     <div class="container-fluid">
@@ -12,8 +12,8 @@
         <p class="navbar-text pull-right">
           Hello,
           <a href="#" class="navbar-link">
-            @if(context.context.isAnonymous) {
-              @context.context.getUsername.map { username =>
+            @if(ctx.isAnonymous) {
+              @ctx.getUsername.map { username =>
                 @username
               }
             }

@@ -9,9 +9,9 @@ import play.api.data.Forms._
 
 import accounting._
 
-object Auth extends GandalfController with Secured {
+object Auth extends GandalfController {
 
-  val userRep = UserRepository.get
+  lazy val userRep = UserRepository.get
 
   val loginForm = Form(
     tuple(
@@ -28,18 +28,19 @@ object Auth extends GandalfController with Secured {
     }.getOrElse(false)
   }
 
-  def login = contextAction { implicit request =>
+  def login = contextAction { implicit ctx =>
     Ok(html.Admin.login(loginForm))
   }
 
-  def authenticate = contextAction { implicit request =>
+  def authenticate = contextActionPost { implicit ctx =>
+    implicit val request = ctx.body
     loginForm.bindFromRequest.fold(
       formWithErrors => BadRequest(html.Admin.login(formWithErrors)),
       user => Redirect(routes.Application.index).withSession(Security.username -> user._1)
     )
   }
 
-  def logout = contextAction { implicit request =>
+  def logout = contextAction { implicit ctx =>
     Redirect(routes.Application.index).withNewSession
   }
 

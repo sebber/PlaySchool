@@ -1,4 +1,4 @@
-@(user: accounting.User)(implicit request: ContextedRequest)
+@(user: accounting.User)(implicit ctx: Context)
 
 @application("Show User") {
   <h1>user.username</h1>

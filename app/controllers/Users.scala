@@ -6,7 +6,7 @@ import views.{ html }
 
 import accounting._
 
-object Users extends GandalfController with Secured {
+object Users extends GandalfController {
 
   val userRepo = UserRepository.get
 

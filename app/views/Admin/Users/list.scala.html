@@ -1,4 +1,4 @@
-@(users: Seq[accounting.User])(implicit request: ContextedRequest)
+@(users: Seq[accounting.User])(implicit ctx: Context)
 
 @application("User list") {
   <h1>User List</h1>
