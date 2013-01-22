@@ -6,7 +6,7 @@ import play.api.mvc._
 import views.{ html }
 
 
-object Application extends GandalfController {
+object Application extends BaseController {
 
   def index = ContextAction { implicit context =>
     Ok(html.Admin.Application.index("Welcome to admin"))

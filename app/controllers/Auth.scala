@@ -9,7 +9,7 @@ import play.api.data.Forms._
 
 import accounting._
 
-object Auth extends GandalfController {
+object Auth extends BaseController {
 
   lazy val userRep = UserRepository.get
 
