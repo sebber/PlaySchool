@@ -8,11 +8,11 @@ import play.api.data.Forms._
 
 sealed abstract class Context(val request: RequestHeader) { 
 
-  def isAuthenticated = request.session.get(Security.username).isDefined
+  lazy val isAuthenticated = request.session.get(Security.username).isDefined
 
-  def isAnonymous = !isAuthenticated
+  lazy val isAnonymous = !isAuthenticated
 
-  def getUsername = request.session.get(Security.username)
+  lazy val getUsername = request.session.get(Security.username).getOrElse("")
 
 }
 
@@ -31,17 +31,43 @@ object Context {
 
 trait GandalfController extends Controller with Secured {
 
+  override def onUnauthorized(request: RequestHeader) = Results.Redirect(routes.Auth.login)
 
-  protected def contextAction(f: Context => Result): Action[AnyContent] =
-    contextAction(BodyParsers.parse.anyContent)(f)
-  protected def contextAction[A](p: BodyParser[A])(f: Context => Result): Action[A] =
+  protected def ContextAction(f: Context => Result): Action[AnyContent] =
+    ContextAction(BodyParsers.parse.anyContent)(f)
+  protected def ContextAction[A](p: BodyParser[A])(f: Context => Result): Action[A] =
     Action(p)(request => f(requestToContext(request)))
 
   
-  protected def contextActionPost(f: BodyContext => Result): Action[AnyContent] =
-    contextActionPost(BodyParsers.parse.anyContent)(f)
-  protected def contextActionPost[A](p: BodyParser[A])(f: BodyContext => Result): Action[A] =
+  protected def ContextActionPost(f: BodyContext => Result): Action[AnyContent] =
+    ContextActionPost(BodyParsers.parse.anyContent)(f)
+  protected def ContextActionPost[A](p: BodyParser[A])(f: BodyContext => Result): Action[A] =
     Action(p)(request => f(requestToContext(request)))
+
+
+  protected def AuthAction(f: Context => Result): Action[AnyContent] =
+    AuthAction(BodyParsers.parse.anyContent)(f)
+  protected def AuthAction[A](p: BodyParser[A])(f: Context => Result): Action[A] =
+    Action(p)( req => {
+      val ctx = requestToContext(req)
+      if(ctx.isAuthenticated)
+        f(ctx)
+      else
+        onUnauthorized(ctx.request)
+    })
+
+  
+  protected def AuthActionPost(f: BodyContext => Result): Action[AnyContent] =
+    AuthActionPost(BodyParsers.parse.anyContent)(f)
+  protected def AuthActionPost[A](p: BodyParser[A])(f: BodyContext => Result): Action[A] =
+    Action(p)( req => {
+      val ctx = requestToContext(req)
+      if(ctx.isAuthenticated)
+        f(ctx)
+      else
+        onUnauthorized(ctx.request)
+    })
+
 
 
   protected def requestToContext(req: Request[_]): BodyContext = Context(req)

@@ -8,11 +8,11 @@ import views.{ html }
 
 object Application extends GandalfController {
 
-  def index = contextAction { implicit context =>
+  def index = ContextAction { implicit context =>
     Ok(html.Admin.Application.index("Welcome to admin"))
   }
 
-  def help = contextAction { implicit context =>
+  def help = ContextAction { implicit context =>
     Ok(html.Admin.Application.index("Helppage"))
   }
 

@@ -28,11 +28,11 @@ object Auth extends GandalfController {
     }.getOrElse(false)
   }
 
-  def login = contextAction { implicit ctx =>
+  def login = ContextAction { implicit ctx =>
     Ok(html.Admin.login(loginForm))
   }
 
-  def authenticate = contextActionPost { implicit ctx =>
+  def authenticate = ContextActionPost { implicit ctx =>
     implicit val request = ctx.body
     loginForm.bindFromRequest.fold(
       formWithErrors => BadRequest(html.Admin.login(formWithErrors)),
@@ -40,7 +40,7 @@ object Auth extends GandalfController {
     )
   }
 
-  def logout = contextAction { implicit ctx =>
+  def logout = ContextAction { implicit ctx =>
     Redirect(routes.Application.index).withNewSession
   }
 
