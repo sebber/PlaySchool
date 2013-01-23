@@ -8,6 +8,8 @@ trait UserRepository {
 
   def getByUsername(username: String): Option[User]
 
+  def update(id: Long, user: User): Unit
+
 }
 
 
@@ -19,9 +21,9 @@ object UserRepository {
 
 class SimpleUserRepository {
 
-  val users: Seq[User] = List(
+  var users: Seq[User] = List(
     User(1, "basse", "hemligt"),
-    User(1, "bengt", "hemligt")
+    User(2, "bengt", "hemligt")
   )
 
   def getAll = users
@@ -33,4 +35,6 @@ class SimpleUserRepository {
   def getByUsername(username: String): Option[User] = {
     users.find((user: User) => user.username == username)
   }
+
+  def update(id: Long, user: User): Unit = {}
 }
