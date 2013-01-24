@@ -28,13 +28,10 @@ class SimpleUserRepository {
 
   def getAll = users
 
-  def getById(id: Long): Option[User] = {
-    users.find((user: User) => user.id == id)
-  }
+  def getById(id: Long): Option[User] = users.find((user: User) => user.id == id)
 
-  def getByUsername(username: String): Option[User] = {
-    users.find((user: User) => user.username == username)
-  }
+  def getByUsername(username: String): Option[User] = users.find((user: User) => user.username == username)
 
   def update(id: Long, user: User): Unit = {}
+  
 }
