@@ -63,39 +63,41 @@ object Users extends BaseController {
 
   def edit(id: Long) = AuthAction { implicit ctx =>
     userRepo.getById(id).map { user =>
-      Ok(html.Admin.Users.edit(id, userForm.fill(user)))
+      Ok(html.Admin.Users.edit(id, usernameForm.fill(user.username), passwordForm))
     }.getOrElse(NotFound)
   }
 
+/*
   def update(id: Long) = AuthActionPost { implicit ctx =>
     implicit val request = ctx.body
     userForm.bindFromRequest.fold(
-      formWithErrors => BadRequest(html.Admin.Users.edit(id, formWithErrors)),
+      formWithErrors => BadRequest(html.Admin.Users.edit(id, formWithErrors, passwordForm)),
       user => {
         userRepo.update(id, user)
         Redirect(routes.Users.index).flashing("success" -> "User has been updated")
       }
     )
   }
+*/
 
   def change_username(id: Long) = AuthActionPost { implicit ctx =>
-    implicit val request = ctx.body
-    userForm.bindFromRequest.fold(
-      formWithErrors => BadRequest(html.Admin.Users.edit(id, formWithErrors)),
-      username => {
-        Ok("")
-      }
-    )
+      implicit val request = ctx.body
+      usernameForm.bindFromRequest.fold(
+        formWithErrors => BadRequest(html.Admin.Users.edit(id, formWithErrors, passwordForm)),
+        username => Ok("Done")
+      )
   }
 
   def change_password(id: Long) = AuthActionPost { implicit ctx =>
     implicit val request = ctx.body
-    userForm.bindFromRequest.fold(
-      formWithErrors => BadRequest(html.Admin.Users.edit(id, formWithErrors)),
-      username => {
-        Ok("")
-      }
-    )
+    userRepo.getById(id).map { user =>
+      passwordForm.bindFromRequest.fold(
+        formWithErrors => BadRequest(html.Admin.Users.edit(id, usernameForm.fill(user.username), formWithErrors)),
+        username => {
+          Ok("Done")
+        }
+      )
+    }.getOrElse(Ok("Not Done"))
   }
 
 } 

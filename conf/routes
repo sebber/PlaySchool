@@ -14,7 +14,7 @@ GET   /logout                 controllers.Auth.logout()
 GET   /users                  controllers.Users.index()
 GET   /user/:id               controllers.Users.show(id: Long)
 GET   /user/:id/edit          controllers.Users.edit(id: Long)
-POST  /user/:id/edit          controllers.Users.update(id: Long)
+#POST  /user/:id/edit          controllers.Users.update(id: Long)
 
 POST  /user/:id/change_username controllers.Users.change_username(id: Long)
 POST  /user/:id/change_password controllers.Users.change_password(id: Long)

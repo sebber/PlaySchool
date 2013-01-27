@@ -1,25 +1,32 @@
-@(id: Long, userForm: Form[accounting.User])(implicit ctx: Context)
+@(id: Long, usernameForm: Form[String], passwordForm: Form[(String, String)])(implicit ctx: Context)
 
 @import helper.twitterBootstrap._
 
 @application("Edit User") {
   <h1>Edit User</h1>
 
-  @helper.form(action = routes.Users.update(id)) {
+  @helper.form(action = routes.Users.change_username(id)) {
+    <h2>Change Username</h2>
 
-    @helper.inputText(userForm("username"))
+    @helper.inputText(usernameForm("username"))
 
-    @helper.inputPassword(userForm("password.main"))
-    @helper.inputPassword(userForm("password.confirm"))
-
-
-    <div class="actions">
-      <input type="submit" class="btn" value="save">
-      <a href="@routes.Users.index" class="btn">Cancel</a>
+    <div class="form-actions">
+      <input type="submit" class="btn" value="Change Username">
     </div>
-
-
-
   }
+
+
+  @helper.form(action = routes.Users.change_password(id)) {
+    <h2>Change Password</h2>
+
+    @helper.inputPassword(passwordForm("password"))
+    @helper.inputPassword(passwordForm("confirm"))
+
+    <div class="form-actions">
+      <input type="submit" class="btn" value="Change Password">
+    </div>
+  }
+
+  <a href="@routes.Users.index" class="btn">Cancel</a>
 
 }

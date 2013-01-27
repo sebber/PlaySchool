@@ -7,7 +7,10 @@ object ApplicationBuild extends Build {
   val appName         = "PlaySchool"
   val appVersion      = "1.0-SNAPSHOT"
 
-  val appDependencies = Seq()
+  val appDependencies = Seq(
+    jdbc,
+    anorm
+  )
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
     // Add your own project settings here      
