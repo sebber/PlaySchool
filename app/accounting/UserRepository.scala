@@ -12,6 +12,8 @@ trait UserRepository {
 
   def update(id: Long, user: User): Unit
 
+  def change_username(id: Long, username: String): Unit
+
   def insert(user: User): Unit
 
   def insert(id: Long, username: String, password: String): Unit
@@ -21,7 +23,7 @@ trait UserRepository {
 
 object UserRepository {
 
-  def get(): UserRepository = new SimpleUserRepository with UserRepository
+  def get(): UserRepository = new AnormUserRepository with UserRepository
 
 }
 
@@ -41,11 +43,11 @@ class SimpleUserRepository {
   def update(id: Long, user: User): Unit = {}
 
   def insert(user: User): Unit = {
-    users.add(user)
+    users ++= List(user)
   }
 
   def insert(id: Long, username: String, password: String): Unit = {
-    users.add(User(id, username, password))
+    users ++= List(User(id, username, password))
   }
   
 }
@@ -58,9 +60,9 @@ class AnormUserRepository {
 
 
   val simple = {
-    get[Pk[Long]]("user.id") ~
-    get[String]("user.username") ~ 
-    get[String]("user.password") map {
+    get[Pk[Long]]("id") ~
+    get[String]("username") ~ 
+    get[String]("password") map {
       case id~username~password => User(id.get, username, password)
     }
   }
@@ -78,6 +80,62 @@ class AnormUserRepository {
     DB.withConnection { implicit c =>
       SQL("select * from users where id = {id}").on('id -> id).as(simple.singleOpt)
     } 
+  }
+
+  def getByUsername(username: String): Option[User] = {
+    DB.withConnection { implicit c =>
+      SQL("select * from users where username = {username}").on('username -> username).as(simple.singleOpt)
+    } 
+  }
+
+  def update(id: Long, user: User): Unit = {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          update users
+          set username = {username}, password = {password}
+          where id = {id} 
+        """
+      ).on(
+        'id -> id,
+        'username -> user.username,
+        'password -> user.password
+      ).executeUpdate()
+    }
+  }
+
+  def change_username(id: Long, username: String): Unit = {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          update users
+          set username = {username}
+          where id = {id} 
+        """
+      ).on(
+        'id -> id,
+        'username -> username
+      ).executeUpdate()
+    }
+  }
+
+  def insert(user: User): Unit = {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+        insert into users(username, password) values(
+          {username}, {password}
+        )
+        """
+      ).on(
+        'username -> user.username,
+        'password -> user.password
+      ).executeUpdate()
+    } 
+  }
+
+  def insert(id: Long, username: String, password: String): Unit = {
+    
   }
 
 

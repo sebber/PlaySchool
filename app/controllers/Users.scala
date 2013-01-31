@@ -84,7 +84,12 @@ object Users extends BaseController {
       implicit val request = ctx.body
       usernameForm.bindFromRequest.fold(
         formWithErrors => BadRequest(html.Admin.Users.edit(id, formWithErrors, passwordForm)),
-        username => Ok("Done")
+        username => {
+          userRepo.getById(id).map { user =>
+            user.change_username(username)
+          }
+          Ok("Done")
+        }
       )
   }
 
